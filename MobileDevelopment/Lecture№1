@@ -1,1 +1,209 @@
+Сохранение настроек приложения
 
+SharedPreferences - постоянное хранилище на платформе Android, используемое приложениями для хранения своих настроек. Пользователь может зайти в настройки приложенияZ и очистить данные приложения, тем самым очистив все данные в хранилище. Значения сохраняются в виде пары: ключ, значение. 
+
+Для работы с данными постоянного хранилища необходим экземпляр класса PersistentStorage.
+
+Метод getSharedPerferences принимает 2 параметра.
+
+name -  выбранный файл настроек. Если файл настроек с таким именем не существует, он будет создан при вызове метода edit() и фиксировании изменений с помощью метода apply().
+
+mode - режим работы
+
+Возможные значения:
+* mode_private - используется в большинстве случаев для приватного доступа к данными приложением-владельцем.
+* MODE_WORLD_READABLE - только для чтения
+
+* MODE_WORLD_WRITEABLE - ТОЛЬКО ЗАПИСИ
+
+* MODE_MULTI_PROCESS - НЕСКОЛЬКО ПРОЦЕССОВ СОВМЕСТНО ИСПОЛЬЗУЮТ ОДИН ФАЙЛ SharedPerferences.
+
+Чтобы получить значение необходимой переменной, используйте следующие методы объекта SharedPreferences:
+
+getBoolean(string, boolean)
+
+getFloat(string, float)
+
+getInt(string, int)
+
+Второй параметр - значение, которое вернется в случае, если значение по ключу key  отсутствует в SharedPerferences. Также методом getAll() можно получить все доступные значения.
+
+Чтобы записать значение переменной необходимо:
+
+Получить объект SharedPreferences. Editor выполнив метод edit() объекта класса SharedPrefernces.
+
+  Записать значение с помощью методов:
+
+putBoolean(String, boolean)
+
+putFloat(String, float)
+
+и т.д.
+
+Выполнить метод commit() или apply()
+
+Также есть возможность удалить конкретное значение (remove(String key)) или все значения (clear()).
+
+Метод commit() устрел, вместо него используется apply().
+
+Файлы настроек хранятся в каталоге /data/data/имяпакета/shared_prefs/имя_файла_настроек.xml
+
+Пример:
+
+class MainActivity AppCompatActivity() {
+  val MY SETTINGS: String = "my_settings"
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+    //для создания или изменения Общих настроек нужно вызвать метод в контексте приложения
+    //проверяем, первый ли роз открывается приложение
+    var sp:SharedPreferences-getSharedPreferences (MY_SETTINGS, Context. MODE PRIVATE)
+    var hasVizited: Boolean-sp.getBoolean("hasVizited", false)
+    if(!hasVizited) {
+      //выводим нужную активность (если первый запуск, то MainActivity2, иначе Moinactivity)
+      val clickActivity2 = Intent(packageContext this@MainActivity, MainActivity2::class.jovo)
+      startActivity(clickActivity2)
+      //изменяем данные
+      var editor:SharedPreferences.Editor-sp.edit()
+      //добавляем пару ключ-значение
+      editor.putBoolean("hasVizited", true)
+      //подтверждаем изменения
+      editor.apply()
+    }
+  }
+}
+
+ViewBinding
+
+Привязка представлений - это функция, упрощающая написание кода, взаимодействующего с представлениями. Как только привязка представления включена в модуле, он создает класс привязки для каждого XML-файла макета, присутсвующего в этом модуле. Экземпляр класса привязка содержит прямые ссылки на все представления, имеющие идентификатор в соответствующем макете. В большинстве случаев привязка представления заменяет findViewById.
+
+Сгенерированный класс привязки называется особым образмо. Например, для файла с разметкой result_profile.xml  - имя файла ResultProfileBinding.
+
+Каждый класс привязки также включает метод getRoot(), предоставляющий прямую ссылку на корневое представление соотвествующего файла макета. 
+
+Дальше идёт пример.
+
+LayoutInflater - это класс, который умеет из содержимого layout-файла создать View-элемент. Метод который это делает называется inflate.
+
+Обработка нажатия на кнопку
+
+  1) Использование атрибута onClick в разметке:
+
+fun click(v: View) {
+  if (v.id==binding!!.user2.id) { 
+    binding!!.user2.text = "Обработка нажатия на кнопку 
+  }
+}
+
+ 2) Назначение слушателя:
+
+  binding!!.user3.setOnClickListener { binding!!.user3.text = "Обработка нажатия на кнопкуз " }
+
+dataBinding
+
+Data Binding Library была создана с учетом шаблона-наблюдателя, что явяляется дополнением к привязке данных.
+
+Привязка данных вводит объектные переменные в XML-файл.
+
+Корневой тег XML-файл - это <layout>, а внутри корневого тега есть два вложенных тега:
+
+<data> и исходный корневой  тег XML интерфейса. В теге <data>  вы можете использовать <variable> для введения переменных.  
+
+Атрибут name - это имя переменной XML-файле, а тип это полное имя класса, соответствующего переменной.
+
+В исходном XML_файле и интерфейса переменная может использоваться  в форме @ {} и переменная указывается в фигурных скобках.
+
+Объект не является наблюдаемым по умолчанию.
+
+Data Binding Library предусматривает удобный класс BaseObservable, реализующй интерфейс Observable и упрощающий распространение изменений в свойствах класса. 
+
+Добавить плагин и синхронизировать с проектом
+
+ФОТО БЫЛО (оно потеряно)
+
+Kapt - инструмент обработки аннотаций Kotlin.
+
+Подключение DataBinding
+
+ФОТО
+```java
+class User(private var name: String.private var age: Int): BaseObservable() {
+
+  @Bindable
+  fun getName(): String {
+    return name
+  }
+  fun setName(name: String) {
+    this.name = name
+    notifyPropertyChanged(BR.name)
+  }
+  @Bindable
+  fun getAge(): Int { return age }
+  fun setAge(age: Int) {
+    this.age = age notifyPropertyChanged(BR.age)
+
+}
+
+
+Класс данных, который реализует класс BaseObservable(реализующий интерфейс Observable) отвечает за уведомление об изменении свойств.
+Это делается путем присвоения аннотации Bindable геттеру, а также вызова метода notifyPropertyChanged() сеттере (в него передается BR.variable). B
+Используется класс BindingResource(BR)
+Название переменной генерируется так же, как id в стандартном R-классе (помечается аннотацией @Bindable)  
+
+  Пример
+
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+  <data>
+    <variable name="user" type="com.example.test.User"/>
+    <variable name="clicker"type="android.view.View.OnClickListener"/>
+  </data>  
+
+  Пример
+
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+  <data>
+    <variable name="user" type="com.example.test.User"/>
+    <variable
+      name="clicker"
+      type="android.view.View.OnClickListener"/>
+  </data>
+
+
+
+
+
+class MainActivity: AppCompatActivity() {
+  lateinit var binding: ActivityMainBinding
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity main)
+    binding DataBindingUtil.setContentView(this, R.layout.activity main)
+    val user User("Иванов Петр", 60);
+    binding.user-user;
+    binding.setClicker {
+      user.setName("Петров Петр");
+      user.setAge(50);
+    }
+  }
+}
+
+DataBindingUtil - служебный класс для создания ViewDataBinding макетов.
+
+Room - это ORM-библиотека, которая упрощает доступ к БД (SQLite) в приложениях Android.
+
+Преимущества:
+
+Проверка SQL во время компиляции
+
+Использование аннотаций для сокращения стандартного кода.
+
+Общепринятая практика - создавать специальные классы для работы с БД. Такое Такие классы получили название DAO (Data Acess Object).
+
+Их задача -  скрывать все сложности работы с базой и предоставлять удобный интерфейс.
